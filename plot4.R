@@ -1,0 +1,29 @@
+datahpc <- read.table("household_power_consumption.txt",sep=";",header = TRUE, na.strings = "?" )
+
+# Subsetting data on 01/02/2007 and 02/02/2007
+dataset <- datahpc[ grep("^[1,2]/2/2007", datahpc$Date),]
+
+# Converting Date to date format
+dataset$Date <- strptime(paste(dataset$Date, dataset$Time, sep = " "),format="%d/%m/%Y %H:%M:%S")
+
+# Just so you don't have French weekdays names displayed
+Sys.setlocale("LC_TIME", "C")
+
+jpeg('plot4.png', width = 480, height = 480)
+
+# 2x2 matrix
+par(mfrow=c(2,2))
+
+with(dataset, {
+  plot(Date,Global_active_power,type="l", ylab = "Global Activer Power", xlab = "",main = "" )
+  
+  plot(Date,Voltage,type="l", ylab = "Voltage", xlab = "datetime",main = "" )
+  
+  plot(Date,Sub_metering_1,type="l", ylab = "Energy sub metering", xlab = "" )
+  lines(Date,Sub_metering_2,type = 'l', col = "red")
+  lines(Date,Sub_metering_3,type = 'l', col= "blue")
+  legend("topright" , legend = c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"),col = c("black","red","blue"),lty=c(1,1,1),bty = "n")
+  
+  plot(Date,Global_reactive_power,type="l", ylab = "Global_reactive_power", xlab = "datetime",main = "" )
+})
+dev.off()
